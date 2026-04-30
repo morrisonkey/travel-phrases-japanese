@@ -466,6 +466,19 @@ function openPhrase(pid) {
 // ═══════════════════════════════════════════════════
 //  SPEECH
 // ═══════════════════════════════════════════════════
+
+// Male ja-JP voice names across iOS/macOS/Android
+const MALE_JA_VOICES = ['Otoya', 'Hattori', 'Ichiro'];
+
+function getVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  const male = voices.find(v =>
+    MALE_JA_VOICES.some(name => v.name.includes(name))
+  );
+  if (male) return male;
+  return voices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP') || null;
+}
+
 function speak() {
   if (!activeP || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
@@ -474,6 +487,9 @@ function speak() {
   u.lang  = 'ja-JP';
   u.rate  = 0.8;
   u.pitch = 1;
+
+  const voice = getVoice();
+  if (voice) u.voice = voice;
 
   const el = document.getElementById('detail-jp');
   el.classList.add('speaking');
